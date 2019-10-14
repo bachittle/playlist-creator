@@ -20,12 +20,11 @@ __pycache__/
 *.tar
 *.zip
 
-# data files not necessary for the public (except for songs.dat for now)
+# data files not necessary for the public 
 *.json
 *.html
+*.dat
+*.log
 
 # other
 *.bin
-scrapers/songs.dat
-bad_playlist_creator.py
-playlist_creator.py
