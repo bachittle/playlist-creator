@@ -1,3 +1,7 @@
+# FOR MASTER BRANCH ONLY
+crypto/
+scrapers/decode.py
+
 # don't track content of these folders
 drivers/
 __pycache__/
