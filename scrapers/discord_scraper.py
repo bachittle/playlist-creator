@@ -1,48 +1,41 @@
 ### main scraper for discord. Gets links from a channel
+# this version does not require you use crypto to save your password on your pc.
+# it uses your local data for chrome, so make sure you are logged in on chrome
 # works as long as the channel does not get deleted
+# ONLY USES CHROME: firefox support is in the old discord scraper (old branch)
+# use the old discord scraper if you have any issues
 
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options           
 
 
 import time
 import datetime
-import decode
 import os.path
-
-if not os.path.isfile("decode.py"):
-    print('Please change your current working directory to scrapers, then run "python discord_scraper.py" in that directory')
-    quit()
 
 start = datetime.datetime.now()
 
 # setup
 print("setting up web drivers")
-option = Options()
-option.add_argument("--headless")
-browser = webdriver.Chrome(options=option) 
-# browser = webdriver.Firefox() 
+options = Options()
+options.add_argument("--headless")               
+# add where your local data is if youre already signed in to discord
+options.add_argument(r"--user-data-dir=C:\Users\Bailey\AppData\Local\Google\Chrome\User Data") 
 
-################################
-# Put the channel URL here     #
-################################
+# use this if your drivers are in your PATH directory
+browser = webdriver.Chrome(options=options)      # for chrome
+
+# use this if you have your drivers in this git repo "playlist-creator/drivers" or anywhere else other than path (type it manually)
+# browser = webdriver.Chrome(r"../drivers", options=options)    
+
+#######################################################
+# Change channel url to the channel of your choice    #
+#######################################################
 url = "https://discordapp.com/channels/453373412707008522/626072947580469258"
 
 browser.get(url) # navigate to the page
-
-# login
-print("********************************")
-print("logging into discord")
-print("********************************")
-email = browser.find_element_by_xpath("//input[@type='email']")
-email.send_keys(decode.data[0])
-password = browser.find_element_by_xpath("//input[@type='password']")
-password.send_keys(decode.data[1])
-button = browser.find_element_by_xpath("//button[@type='submit']")
-button.click()
-print("login successful")
 
 time.sleep(10)
 
@@ -58,12 +51,13 @@ action = ActionChains(browser)
 links = []
 j = 0 
 error_amount = 0 # shouldn't surpass 3
-freq = 30
-for i in range(freq * 7 + 1):
+freq = 30        # the frequency of link scraping
+call_amount = 7  # amount of times you call the link scraper
+for i in range(freq * call_amount + 1):
     try:
         action.send_keys(Keys.PAGE_UP).perform()
         if j % freq == 0:
-            # find all links
+            # scrape links
             sub_links = browser.find_elements_by_xpath("//a")
             sub_links = [x.text for x in sub_links]    # convert to array
             # print(str(links) + "\n\n\n" + str(sub_links))
@@ -72,12 +66,13 @@ for i in range(freq * 7 + 1):
             print(len(links))
         j += 1
         time.sleep(0.1 / i)
-    except:
+    except Exception as e:
         print("Error: trying again...")
         error_amount += 1
         if error_amount >= 3: 
             print("too many errors. Exiting...")
-            quit()
+            print(e)
+            quit(2)
     
 print(len(links))
 links = list(filter(None, links))      # filter empty
@@ -112,7 +107,7 @@ new_filename = input()
 if new_filename == "a": 
     print("aborting...")
     browser.quit()
-    quit()
+    quit(3)
 if not new_filename: new_filename = filename
 save(new_filename)
 
