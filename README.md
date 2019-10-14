@@ -1,4 +1,4 @@
-# My Playlist Creator
+# Discord Playlist Creator
 Web scrapes discord using your own account, and converts each link into a youtube playlist
 
 ## Setup
