@@ -1,7 +1,7 @@
 # My Playlist Creator
 Web scrapes discord using your own account, and converts each link into a youtube playlist
 
-## setup
+## Setup
 install the required dependencies
 
 ```sh
@@ -11,8 +11,10 @@ pip install -r requirements.txt
 you must also install chromedriver.exe to use the python files: discord_scraper.py, bad_playlist_creator.py, bad_playlist_creator_ALL.py.
 
 Get it from here: https://chromedriver.storage.googleapis.com/index.html?path=77.0.3865.40/
+
 if that doesn't work try different versions: https://chromedriver.chromium.org/downloads
-Put it in your PATH directory if you don't know how to do this, comment out the code that looks like this:
+
+Put it in your PATH directory. If you don't know how to do this, comment out the code that looks like this:
 ```python
 browser = webdriver.Chrome(options=options)      # for chrome
 ```
@@ -51,7 +53,7 @@ python convert_to_youtube.py
 ```
 once you have a songs.json file, this program will make sure every song has a youtube link. It does this by querying youtube search and picking the first result. Will resave in the same songs.json format
 
-### You can choose between any of these playlist creators. They are in order from most to least efficient
+### You can choose between any of these playlist creators. They are in order from worst to best in terms of time efficiency
 #### scrapers/bad_playlist_creator_ALL.py
 ```sh
 python bad_playlist_creator_ALL.py
