@@ -15,6 +15,13 @@ file_in = open(song_filename, "r")
 song_urls = file_in.read().split("\n")
 file_in.close()
 
+file_in = open("songs.json", "r")
+old_song_dict = file_in.read()
+file_in.close()
+old_song_dict = json.loads(old_song_dict)
+old_song_dict = old_song_dict["links"]
+print(old_song_dict)
+
 linktype = input("Which type of link would you like to save? \n"+
     "('y' for youtube, 'e' for everything other than youtube, (default all links):")
 if not linktype: linktype = "o"
@@ -28,6 +35,16 @@ for url in song_urls[:]:
 
     # empty link
     if url == "": continue 
+
+    # check if link already exists 
+    breaker = 0
+    for name in old_song_dict:
+        if "youtube" in old_song_dict[name] and old_song_dict[name]["youtube"] in url:
+            breaker = 1
+            break
+    if breaker == 1:
+        continue
+    print(url)
 
     # remove link based on linktype
     if linktype[0] == "y":
@@ -62,7 +79,7 @@ for url in song_urls[:]:
     soup = BeautifulSoup(response.text, "lxml")
     title = soup.title.string
     if title == "YouTube":
-        print("Invalid link. Trying again...")
+        print("Invalid title. Trying again...")
         response = requests.get(url)
         time.sleep(10)
         soup = BeautifulSoup(response.text, "lxml")
@@ -80,6 +97,7 @@ for url in song_urls[:]:
 ### create json format of dict
 # an unexpected yet welcome side effect is dictionaries remove duplicate links, so if anyone posts the same link it will remove the dupes
 song_dict = dict(zip(song_titles, song_stuff))
+song_dict.update(old_song_dict)
 song_dict = {
     "length": len(song_dict),
     "links": song_dict
@@ -87,7 +105,7 @@ song_dict = {
 song_json = json.dumps(song_dict, sort_keys=True, separators=(',', ':'), indent=4)
 
 # save to json file
-default_song_json_filename = "songs3.json"
+default_song_json_filename = "songs.json"
 song_json_filename = input("Please enter what filename you would like to save to. Default is ("+default_song_json_filename+"): ")
 if not song_json_filename: song_json_filename = default_song_json_filename 
 file_out = open(song_json_filename, "w")

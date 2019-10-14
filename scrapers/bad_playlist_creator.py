@@ -6,7 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options           
-
+import requests
+from bs4 import BeautifulSoup
 
 import json
 import time
@@ -14,8 +15,13 @@ import datetime
 import os.path
 
 start = datetime.datetime.now()
-my_playlist = input("please enter the name of the playlist you would like to add to (case_sensitive): ")
-if not my_playlist: my_playlist = "uWin Discord CS music"
+my_playlist = input("please enter the playlist url: ")
+if not my_playlist: my_playlist = "https://www.youtube.com/playlist?list=PLM5ZrANa_78gHjjpuBknrx86fQbQT1kTL"
+response = requests.get(my_playlist)
+soup = BeautifulSoup(response.text, "html.parser")
+my_playlist = soup.title.string
+my_playlist = my_playlist[:my_playlist.find(" - YouTube")]
+print(my_playlist + ".")
 
 # load required files
 file_in = open("songs.json", "r")
@@ -30,7 +36,7 @@ song_links = songs["links"]
 # setup
 print("setting up web drivers")
 options = Options()
-options.add_argument("--headless")               
+# options.add_argument("--headless")               
 # add where your local data is if youre already signed in to discord
 options.add_argument(r"--user-data-dir=C:\Users\Bailey\AppData\Local\Google\Chrome\User Data") 
 
@@ -77,10 +83,8 @@ for song_name in song_links:
             if my_playlist in playlist.text:
                 if playlist.get_attribute("aria-checked") == 'false':
                     playlist.find_element_by_xpath('.//div[@id="checkboxContainer"]').click()
+                    time.sleep(1)
     except Exception as e:
-        print(e)
-        file_out.close()
-        file_out = open("../playlist_ids.dat", "a")
         continue
 
 file_out.close()

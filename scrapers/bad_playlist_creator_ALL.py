@@ -9,6 +9,8 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options           
+import requests
+from bs4 import BeautifulSoup
 
 
 import json
@@ -17,8 +19,13 @@ import datetime
 import os.path
 
 start = datetime.datetime.now()
-my_playlist = input("please enter the name of the playlist you would like to add to (case-sensitive): ")
-if not my_playlist: my_playlist = "uWin Discord CS music"
+my_playlist = input("please enter the playlist url: ")
+if not my_playlist: my_playlist = "https://www.youtube.com/playlist?list=PLM5ZrANa_78gHjjpuBknrx86fQbQT1kTL"
+response = requests.get(my_playlist)
+soup = BeautifulSoup(response.text, "html.parser")
+my_playlist = soup.title.string
+my_playlist = my_playlist[:my_playlist.find(" - YouTube")]
+print(my_playlist + ".")
 
 # load required files
 file_in = open("songs.json", "r")
@@ -64,7 +71,7 @@ for song_name in song_links:
         # button = browser.find_element_by_xpath('//yt-formatted-string[@class="style-scope ytd-button-renderer style-default size-default"]')
         button = browser.find_element_by_xpath("//yt-formatted-string[contains(text(), 'Save')]")
         button.click()
-        time.sleep(1)
+        time.sleep(2)
         # playlists = browser.find_elements_by_css_selector("yt-formatted-string#label.checkbox-height.style-scope.ytd-playlist-add-to-option-renderer")
         playlists = browser.find_elements_by_css_selector("paper-checkbox#checkbox.style-scope.ytd-playlist-add-to-option-renderer")
 
@@ -72,10 +79,8 @@ for song_name in song_links:
             if my_playlist in playlist.text:
                 if playlist.get_attribute("aria-checked") == 'false':
                     playlist.find_element_by_xpath('.//div[@id="checkboxContainer"]').click()
+                    time.sleep(2)
     except Exception as e:
-        print(e)
-        file_out.close()
-        file_out = open("../" + filename, "w")
         continue
 
 file_out.close()

@@ -20,7 +20,10 @@ start = datetime.datetime.now()
 # setup
 print("setting up web drivers")
 options = Options()
-options.add_argument("--headless")               
+
+# headless doesn't seem to work...
+# options.add_argument("--headless")               
+
 # add where your local data is if youre already signed in to discord
 options.add_argument(r"--user-data-dir=C:\Users\Bailey\AppData\Local\Google\Chrome\User Data") 
 
@@ -47,7 +50,13 @@ def my_filter(x):
     return "https://" in x
 
 action = ActionChains(browser)
-# scroll up loop.  
+old_links = None
+filename = "songs.dat"
+is_file = os.path.isfile(filename) 
+if is_file:
+    file_in = open(filename, "r")
+    old_links = file_in.read().split("\n")
+    file_in.close()
 links = []
 j = 0 
 error_amount = 0 # shouldn't surpass 3
@@ -56,6 +65,7 @@ call_amount = 7  # amount of times you call the link scraper
 for i in range(freq * call_amount + 1):
     try:
         action.send_keys(Keys.PAGE_UP).perform()
+        breaker = 0
         if j % freq == 0:
             # scrape links
             sub_links = browser.find_elements_by_xpath("//a")
@@ -63,7 +73,17 @@ for i in range(freq * call_amount + 1):
             # print(str(links) + "\n\n\n" + str(sub_links))
             links.extend(sub_links)
             links = list(set(links))
-            print(len(links))
+            print(links)
+            if is_file:
+                for old_link in old_links:
+                    if old_link in links:
+                        print("found link")
+                        links.extend(old_links)
+                        links = list(set(links))
+                        breaker = 1
+                        break
+        if breaker == 1:
+            break
         j += 1
         time.sleep(0.1 / i)
     except Exception as e:
@@ -74,7 +94,6 @@ for i in range(freq * call_amount + 1):
             print(e)
             quit(2)
     
-print(len(links))
 links = list(filter(None, links))      # filter empty
 links = list(filter(my_filter, links)) # filter only containing https://
 
@@ -82,22 +101,18 @@ end = datetime.datetime.now()
 delta = end - start
 
 # save to file
-filename = "songs.dat"
-if os.path.isfile(filename):
-    file_in = open(filename, "r")
-    old_data = file_in.read()
-    old_size = str(old_data.count('\n'))
+if is_file:
+    old_size = str(len(old_links))
     new_size = str(len(links))
     print("old file size: " + old_size)
     print("new file size: " + new_size)
-    file_in.close()
     if new_size < old_size:
         print("Warning: new size is less than the old size.")
         print("Either someone deleted a song or the program messed up")
 
 
-def save(filename):
-    file_out = open(filename, "w")
+def save(filename, io_type):
+    file_out = open(filename, io_type)
     for x in links:
         file_out.write(x + "\n")
     file_out.close()
@@ -109,7 +124,7 @@ if new_filename == "a":
     browser.quit()
     quit(3)
 if not new_filename: new_filename = filename
-save(new_filename)
+save(new_filename, "w")
 
 
 print("********************************")
