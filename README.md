@@ -8,7 +8,8 @@ install the required dependencies
 pip install -r requirements.txt
 ```
 
-you must also install chromedriver.exe to use the python files: discord_scraper.py, bad_playlist_creator.py, bad_playlist_creator_ALL.py
+you must also install chromedriver.exe to use the python files: discord_scraper.py, bad_playlist_creator.py, bad_playlist_creator_ALL.py.
+
 Get it from here: https://chromedriver.storage.googleapis.com/index.html?path=77.0.3865.40/
 if that doesn't work try different versions: https://chromedriver.chromium.org/downloads
 Put it in your PATH directory if you don't know how to do this, comment out the code that looks like this:
