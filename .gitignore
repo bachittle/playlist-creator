@@ -9,6 +9,7 @@ __pycache__/
 *.exe
 *.o
 *.so
+*.pyc
 
 # compressed packages
 *.7z
