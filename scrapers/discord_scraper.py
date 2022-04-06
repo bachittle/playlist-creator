@@ -5,6 +5,7 @@
 # ONLY USES CHROME: firefox support is in the old discord scraper (old branch)
 # use the old discord scraper if you have any issues
 
+from webdrivermanager import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -17,6 +18,9 @@ import os.path
 
 start = datetime.datetime.now()
 
+driver_manager = ChromeDriverManager()
+driver_manager.download_and_install()
+
 # setup
 print("setting up web drivers")
 options = Options()
@@ -25,18 +29,18 @@ options = Options()
 # options.add_argument("--headless")               
 
 # add where your local data is if youre already signed in to discord
-options.add_argument(r"--user-data-dir=C:\Users\Bailey\AppData\Local\Google\Chrome\User Data") 
+#options.add_argument(r"--user-data-dir=C:\Users\Bailey\AppData\Local\Google\Chrome\User Data")
 
 # use this if your drivers are in your PATH directory
 browser = webdriver.Chrome(options=options)      # for chrome
 
 # use this if you have your drivers in this git repo "playlist-creator/drivers" or anywhere else other than path (type it manually)
-# browser = webdriver.Chrome(r"../drivers", options=options)    
+# browser = webdriver.Chrome(r"../drivers", options=options)
 
 #######################################################
 # Change channel url to the channel of your choice    #
 #######################################################
-url = "https://discordapp.com/channels/453373412707008522/626072947580469258"
+url = "https://discord.com/channels/667734565309382657/781945075948978197"
 
 browser.get(url) # navigate to the page
 
