@@ -7,5 +7,5 @@ google-auth-oauthlib==0.4.1
 httplib2==0.19.0
 oauthlib==3.1.0
 pycryptodome==3.9.0
-requests==2.22.0
+requests==2.31.0
 selenium==3.141.0
